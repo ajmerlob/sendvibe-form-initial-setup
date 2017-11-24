@@ -2,12 +2,13 @@ import json
 import operator
 import os
 import requests
+import logging
 import email
 import smtplib
-sender_address=os.environ['SENDING_ADDRESS']
-password = os.environ['PASSWORD']
 
 def send_email(email_address,display_url):
+    sender_address=os.environ['SENDING_ADDRESS']
+    password = os.environ['PASSWORD']
     message = "From: %s\r\nSubject: %s\r\nTo: %s\r\n\r\n" % (sender_address,"Welcome to SendVibe - Let's Get Started!",email_address) + \
     """Welcome to the SendVibe family!  You're going to do great here!
 
@@ -68,6 +69,13 @@ EMAIL = """,{
       }
     }"""
 
+def set_webhook(form_id,typeform_access_token):
+    uri = "https://api.typeform.com/forms/{}/webhooks/sendvibe".format(form_id)
+    headers = {'Authorization': typeform_access_token,"Content-Type":"application/json"}
+    data = json.dumps({"url":"https://sendvibe.work/typeform", "enabled":True})
+    r2 = requests.put(uri, headers = headers, data=data)
+    print r2
+
 def get_field(address):
     return FIELD % (address,address)
 
@@ -77,11 +85,16 @@ def get_fields(contacts):
 def email_typeform(email_address,contacts):
     data = '{"title": "SendVibe Setup", "fields" : [%s]}' % get_fields(contacts)
     typeform_access_token = "bearer {}".format(os.environ['ACCESS_TOKEN'])
+    print 
     r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data).json()
     if '_links' not in r:
         logging.error("_links not in typeform response")
         logging.error(r)
         return False
     display_url = r['_links']['display']
+    form_id = display_url.split("/")[-1]
+    set_webhook(form_id,typeform_access_token)
     return send_email(email_address,display_url)
-    
+
+if __name__ == '__main__':
+    email_typeform("sendvibe@gmail.com",["cool@cool.com","dude@dude.com"])
