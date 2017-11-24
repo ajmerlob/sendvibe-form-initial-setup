@@ -6,6 +6,7 @@ import requests
 
 min_from = 0
 min_to = 0
+num_contacts = 9
 
 s3 = boto3.client('s3',region_name='us-west-2')
 from_dict = {}
@@ -16,42 +17,6 @@ def scrub(txt):
         return txt.split('<')[1].split(">")[0]
     return txt
     
-def email_typeform(email_address,contacts):
-    typeform_access_token = os.environ['ACCESS_TOKEN']
-    r = requests.post("https://api.typeform.com/forms", headers=headers = {'X-API-TOKEN': typeform_access_token})
-    data = """
-    {"title": "SendVibe Setup", 
-    "fields" : [{
-      "ref": "mc1",
-      "title": "MC1",
-      "type": "multiple_choice",
-      "properties": {
-        "description": "Cool description for the multiple choice",
-        "randomize": true,
-        "allow_multiple_selection": false,
-        "allow_other_choice": true,
-        "vertical_alignment": false,
-        "choices": [
-          {
-            "label": "Foo",
-            "ref": "foo_choice_ref"
-          },
-          {
-            "label": "Bar",
-            "ref": "bar_choice_ref"
-          }
-        ]
-      },
-      "validations": {
-        "required": false
-      }
-    }]}
-    """
-    
-    print r
-    return None
-
-
 def assess_top_contacts(dfrom, dto,contacts_to_return):
     both = {}
     for t in dto:
@@ -86,7 +51,7 @@ def lambda_handler(event, context):
                             from_dict[sender] = 0
                         from_dict[sender] += 1
                     
-        contacts = [contact[0] for contact in assess_top_contacts(from_dict,to_dict, 2)]
+        contacts = [contact[0] for contact in assess_top_contacts(from_dict,to_dict, num_contacts)]
         email_typeform(email_address,contacts)
         #s3.delete_object(Bucket='email-data-first-run',Key=email_address)    
     return "Hi Mom!"
