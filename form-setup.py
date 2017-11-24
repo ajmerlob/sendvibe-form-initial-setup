@@ -3,6 +3,7 @@ import boto3
 import operator
 import os
 import requests
+import typeform
 
 min_from = 0
 min_to = 0
@@ -52,6 +53,6 @@ def lambda_handler(event, context):
                         from_dict[sender] += 1
                     
         contacts = [contact[0] for contact in assess_top_contacts(from_dict,to_dict, num_contacts)]
-        email_typeform(email_address,contacts)
+        return email_typeform(email_address,contacts)
         #s3.delete_object(Bucket='email-data-first-run',Key=email_address)    
     return "Hi Mom!"

@@ -40,7 +40,4 @@ def email_typeform(email_address,contacts):
     typeform_access_token = "bearer {}".format(os.environ['ACCESS_TOKEN'])
     r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data) 
     
-    print r.json()
-    return None
-
-email_typeform('sendvibe@gmail.com',['ajmerlob@gmail.com','meetupaaron@gmail.com'])
+    return r.json()
