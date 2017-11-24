@@ -18,7 +18,8 @@ def scrub(txt):
     
 def email_typeform(email_address,contacts):
     typeform_access_token = os.environ['ACCESS_TOKEN']
-    r = requests.post("https://api.typeform.com/forms", data = """
+    r = requests.post("https://api.typeform.com/forms", headers=headers = {'X-API-TOKEN': typeform_access_token})
+    data = """
     {"title": "SendVibe Setup", 
     "fields" : [{
       "ref": "mc1",
@@ -46,7 +47,7 @@ def email_typeform(email_address,contacts):
       }
     }]}
     """
-    )
+    
     print r
     return None
 
