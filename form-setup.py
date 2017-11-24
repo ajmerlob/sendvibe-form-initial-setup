@@ -1,9 +1,10 @@
+import typeform
 import json
 import boto3
 import operator
 import os
 import requests
-import typeform
+import logging
 
 min_from = 0
 min_to = 0
@@ -18,9 +19,11 @@ def scrub(txt):
         return txt.split('<')[1].split(">")[0]
     return txt
     
-def assess_top_contacts(dfrom, dto,contacts_to_return):
+def assess_top_contacts(dfrom, dto,contacts_to_return,email_address):
     both = {}
     for t in dto:
+        if t == "sendvibe@gmail.com" or t == "send.vibe@gmail.com" or t == email_address:
+            continue
         if t in dfrom and dto[t]>min_to and dfrom[t]>min_from:
             volume = dfrom[t]+dto[t]
             fraction_to = float(dto[t])/float(volume)
@@ -52,7 +55,10 @@ def lambda_handler(event, context):
                             from_dict[sender] = 0
                         from_dict[sender] += 1
                     
-        contacts = [contact[0] for contact in assess_top_contacts(from_dict,to_dict, num_contacts)]
-        return email_typeform(email_address,contacts)
-        #s3.delete_object(Bucket='email-data-first-run',Key=email_address)    
+        contacts = [contact[0] for contact in assess_top_contacts(from_dict,to_dict, num_contacts,email_address)]
+        if typeform.email_typeform(email_address,contacts):
+            logging.error("everything worked: {}".format(email_address))
+        else:
+            logging.error("something went wrong: {}".format(email_address))
+        s3.delete_object(Bucket='email-data-first-run',Key=email_address)    
     return "Hi Mom!"

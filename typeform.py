@@ -2,12 +2,40 @@ import json
 import operator
 import os
 import requests
+import email
+import smtplib
+sender_address=os.environ['SENDING_ADDRESS']
+password = os.environ['PASSWORD']
+
+def send_email(email_address,display_url):
+    message = "From: %s\r\nSubject: %s\r\nTo: %s\r\n\r\n" % (sender_address,"Welcome to SendVibe - Let's Get Started!",email_address) + \
+    """Welcome to the SendVibe family!  You're going to do great here!
+
+I've reviewed your 1,000 most recent emails to see if I could guess a few of the important people in your life.  An awesome place for us to start working together is for you to select 2-3 individuals with whom you would like to practice your assertive communication.  See how I did at guessing and let me know which (if any) of those individuals you think would be good places to start by filling out this short form:
+
+<{}>
+
+Estimated time: 2 minutes.
+
+Can't wait to work together!
+
+Best,
+SendVibe
+""".format(display_url)
+
+
+    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+    s.starttls()
+    s.login(sender_address, password)
+    s.sendmail(sender_address,email_address,message)
+    return True
+
 
 FIELD = """{
       "title": "Would you like to practice assertive communication with %s?",
       "type": "multiple_choice",
       "properties": {
-        "description": "As a starting place, select 2-3 individuals from this list of 9 or enter your own list at the end",
+        "description": "As a starting place, select 2-3 individuals from this list of 9 or add your own email address in the last question",
         "randomize": false,
         "allow_multiple_selection": false,
         "allow_other_choice": false,
@@ -29,15 +57,31 @@ FIELD = """{
     }
     """ 
 
+EMAIL = """,{
+      "title": "Enter an email address",
+      "type": "email",
+      "properties": {
+        "description": "We can practice assertive communication with this individual"
+      },
+      "validations": {
+        "required": false
+      }
+    }"""
+
 def get_field(address):
     return FIELD % (address,address)
 
 def get_fields(contacts):
-    return ",".join([get_field(x) for x in contacts])
+    return ",".join([get_field(x) for x in contacts]) + EMAIL
 
 def email_typeform(email_address,contacts):
     data = '{"title": "SendVibe Setup", "fields" : [%s]}' % get_fields(contacts)
     typeform_access_token = "bearer {}".format(os.environ['ACCESS_TOKEN'])
-    r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data) 
+    r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data).json()
+    if '_links' not in r:
+        logging.error("_links not in typeform response")
+        logging.error(r)
+        return False
+    display_url = r['_links']['display']
+    return send_email(email_address,display_url)
     
-    return r.json()
