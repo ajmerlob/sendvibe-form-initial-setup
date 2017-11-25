@@ -11,7 +11,7 @@ min_to = 0
 num_contacts = 9
 
 s3 = boto3.client('s3',region_name='us-west-2')
-interaction_table = boto3.resource('dynamodb')
+interaction_table = boto3.resource('dynamodb').Table('last_interaction')
 from_dict = {}
 to_dict = {}
 
