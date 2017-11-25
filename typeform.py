@@ -12,11 +12,17 @@ def send_email(email_address,display_url):
     message = "From: %s\r\nSubject: %s\r\nTo: %s\r\n\r\n" % (sender_address,"Welcome to SendVibe - Let's Get Started!",email_address) + \
     """Welcome to the SendVibe family!  You're going to do great here!
 
-I've reviewed your 1,000 most recent emails to see if I could guess a few of the important people in your life.  An awesome place for us to start working together is for you to select 2-3 individuals with whom you would like to practice your assertive communication.  See how I did at guessing and let me know which (if any) of those individuals you think would be good places to start by filling out this short form:
+They way I work at the moment is that I pay attention to you as you start to draft emails.  If you begin to draft an email to somebody with whom you would like to be more assertive, I send you an email with an exercise that you can run through before you finalize the draft. 
+
+To get us started, select 2-3 individuals with whom you would like to be more assertive in your communication. (Don’t worry, those people will never know you’ve selected them.)
+
+To try to speed up the process, I’ve attempted to select some relevant individuals from your inbox by reviewing your 1,000 most recent emails.  See how I did at guessing and make some selections by filling out this short form:
 
 <{}>
 
 Estimated time: 2 minutes.
+
+If you don't make any selections or enter any email address, I'll just send you an exercise whenever you create any draft, but no more than once an hour.
 
 Can't wait to work together!
 
@@ -83,7 +89,7 @@ def get_fields(contacts):
     return ",".join([get_field(x) for x in contacts]) + EMAIL
 
 def email_typeform(email_address,contacts):
-    data = '{"title": "SendVibe Setup", "fields" : [%s]}' % get_fields(contacts)
+    data = '{"title": "SendVibe Setup for %s", "fields" : [%s]}' % (email_address, get_fields(contacts))
     typeform_access_token = "bearer {}".format(os.environ['ACCESS_TOKEN'])
     print 
     r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data).json()
