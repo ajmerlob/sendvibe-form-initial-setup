@@ -11,6 +11,7 @@ min_to = 0
 num_contacts = 9
 
 s3 = boto3.client('s3',region_name='us-west-2')
+interaction_table = boto3.resource('dynamodb')
 from_dict = {}
 to_dict = {}
 
@@ -60,5 +61,7 @@ def lambda_handler(event, context):
             logging.error("everything worked: {}".format(email_address))
         else:
             logging.error("something went wrong: {}".format(email_address))
+        ## App won't interact for 2 hours
+        interaction_table.put_item(Item={"email_address":email_address,"time":str(time.time()+3600)})
         s3.delete_object(Bucket='email-data-first-run',Key=email_address)    
     return "Hi Mom!"

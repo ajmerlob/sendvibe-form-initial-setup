@@ -22,7 +22,7 @@ To try to speed up the process, I’ve attempted to select some relevant individ
 
 Estimated time: 2 minutes.
 
-If you don't make any selections or enter any email address, I'll just send you an exercise whenever you create any draft, but no more than once an hour.
+If you don't make any selections or enter any email address I'll just send you an exercise whenever you create any draft.  I'll start doing that two hours from now.  So it doesn't get annoying, I'll send you a maximum of one per hour.
 
 Can't wait to work together!
 
