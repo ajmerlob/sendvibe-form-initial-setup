@@ -14,9 +14,9 @@ def send_email(email_address,display_url):
 
 They way I work at the moment is that I pay attention to you as you start to draft emails.  If you begin to draft an email to somebody with whom you would like to be more assertive, I send you an email with an exercise that you can run through before you finalize the draft. 
 
-To get us started, select 2-3 individuals with whom you would like to be more assertive in your communication. (Don’t worry, those people will never know you’ve selected them.)
+To get us started, select 2-3 individuals with whom you would like to be more assertive in your communication. (Don't worry, those people will never know you've selected them.)
 
-To try to speed up the process, I’ve attempted to select some relevant individuals from your inbox by reviewing your 1,000 most recent emails.  See how I did at guessing and make some selections by filling out this short form:
+To try to speed up the process, I've attempted to select some relevant individuals from your inbox by reviewing your 1,000 most recent emails.  See how I did at guessing and make some selections by filling out this short form:
 
 <{}>
 
