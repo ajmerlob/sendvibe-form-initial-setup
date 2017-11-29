@@ -5,7 +5,7 @@ import os
 import requests
 import logging
 import email
-from utilities import util
+from utilities.util import Util
 
 u = Util()
 

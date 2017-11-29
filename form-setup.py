@@ -1,3 +1,5 @@
+from utilities.util import Util
+u = Util()
 import time
 import typeform
 import json
@@ -6,9 +8,7 @@ import operator
 import os
 import requests
 import logging
-from utilities import util
 
-u = Util()
 min_from = 0
 min_to = 0
 num_contacts = 9
