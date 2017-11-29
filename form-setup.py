@@ -6,7 +6,9 @@ import operator
 import os
 import requests
 import logging
+from utilities import util
 
+u = Util()
 min_from = 0
 min_to = 0
 num_contacts = 9
@@ -16,11 +18,6 @@ interaction_table = boto3.resource('dynamodb').Table('last_interaction')
 from_dict = {}
 to_dict = {}
 
-def scrub(txt):
-    if "<" in txt and ">" in txt:
-        return txt.split('<')[1].split(">")[0]
-    return txt
-    
 def assess_top_contacts(dfrom, dto,contacts_to_return,email_address):
     both = {}
     for t in dto:
@@ -45,13 +42,13 @@ def lambda_handler(event, context):
         for line in obj['Body'].read().split("\n"):
             for header in json.loads(line.strip())['payload']['headers']:
                 if header['name'] == 'To':
-                    recipient_list = [scrub(x.strip()) for x in header['value'].split(",")]
+                    recipient_list = [u.scrub(x.strip()) for x in header['value'].split(",")]
                     for recipient in recipient_list:
                         if recipient not in to_dict:
                             to_dict[recipient] = 0
                         to_dict[recipient] += 1
                 if header['name'] == 'From':
-                    sender_list = [scrub(x.strip()) for x in header['value'].split(",")]
+                    sender_list = [u.scrub(x.strip()) for x in header['value'].split(",")]
                     for sender in sender_list:
                         if sender not in from_dict:
                             from_dict[sender] = 0

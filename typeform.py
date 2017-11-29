@@ -5,7 +5,9 @@ import os
 import requests
 import logging
 import email
-import smtplib
+from utilities import util
+
+u = Util()
 
 def send_email(email_address,display_url):
     sender_address=os.environ['SENDING_ADDRESS']
@@ -31,11 +33,7 @@ Best,
 SendVibe
 """.format(display_url)
 
-
-    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
-    s.starttls()
-    s.login(sender_address, password)
-    s.sendmail(sender_address,email_address,message)
+    u.mail(sender_address,email_address,message,password)
     return True
 
 
@@ -65,7 +63,7 @@ FIELD = """{
     }
     """ 
 
-EMAIL = """,{
+EMAIL = """{
       "title": "Enter an email address",
       "type": "email",
       "properties": {
@@ -87,7 +85,7 @@ def get_field(address):
     return FIELD % (address,address)
 
 def get_fields(contacts):
-    return ",".join([get_field(x) for x in contacts]) + EMAIL
+    return ",".join([get_field(x) for x in contacts] + [EMAIL])
 
 def email_typeform(email_address,contacts):
     data = '{"title": "SendVibe Setup for %s", "fields" : [%s]}' % (email_address, get_fields(contacts))
@@ -96,6 +94,7 @@ def email_typeform(email_address,contacts):
     r = requests.post("https://api.typeform.com/forms", headers = {'Authorization': typeform_access_token}, data = data).json()
     if '_links' not in r:
         logging.error("_links not in typeform response")
+        logging.error(data)
         logging.error(r)
         return False
     display_url = r['_links']['display']
